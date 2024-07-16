@@ -64,6 +64,7 @@ import org.joinmastodon.android.ui.views.FixedAspectRatioImageView;
 import org.joinmastodon.android.updater.GithubSelfUpdater;
 import org.parceler.Parcels;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -189,6 +190,19 @@ public class HomeTimelineFragment extends StatusListFragment implements ToolbarD
 			@Override
 			public void onError(ErrorResponse error){}
 		});
+	}
+
+
+	private String filterWords(String content) {
+		// Define words to be filtered or replaced
+		List<String> bannedWords = Arrays.asList("I", "the");
+		String filteredContent = content;
+
+		for (String word : bannedWords) {
+			filteredContent = filteredContent.replaceAll("(?i)" + word, "****");
+		}
+
+		return filteredContent;
 	}
 
 	@Override
@@ -705,6 +719,11 @@ public class HomeTimelineFragment extends StatusListFragment implements ToolbarD
 				localTimelineBannerHelper.removeBanner(mergeAdapter);
 			}
 		}
+
+		for (Status status : d){
+			status.content = filterWords(status.content);
+		}
+
 		super.onDataLoaded(d, more);
 	}
 
